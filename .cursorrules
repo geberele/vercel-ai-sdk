@@ -1,0 +1,14 @@
+{
+  "rules": [
+    {
+      "description": "Include 'node_modules' for context without modification.",
+      "enabled": true,
+      "paths": [
+        "./node_modules/**"
+      ],
+      "actions": [
+        "read"
+      ]
+    }
+  ]
+}
