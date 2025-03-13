@@ -61,22 +61,6 @@ For local development and testing without API costs, you can use [Ollama](https:
 3. Pull models using the Ollama CLI (e.g., `ollama pull llama3`)
 4. Configure your application to use the local Ollama endpoint
 
-Popular Ollama models that work well with this demo include:
-
-- `llama3` (8B, 70B) - General purpose models
-- `llama3.1` (8B, 70B, 405B) - Improved reasoning capabilities
-- `deepseek-r1` - Strong reasoning model comparable to commercial options
-- `phi4` (14B) - Efficient and capable model from Microsoft
-- `mixtral` (8x7B) - Mixture of Experts model with strong performance
-
-To use these models with the AI SDK, you'll need to set up the OpenAI Compatible provider with your local Ollama server URL.
-
-To obtain these API keys:
-
-- [OpenAI API keys](https://platform.openai.com/account/api-keys)
-- [Anthropic API keys](https://console.anthropic.com/account/keys)
-- For local models, follow the setup instructions for your local LLM infrastructure
-
 ## Pricing
 
 Using AI models from various providers incurs costs based on their pricing models. Here are links to pricing information for the major providers:
