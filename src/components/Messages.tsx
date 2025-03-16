@@ -2,6 +2,13 @@ import { UIMessage } from 'ai';
 import { VStack, Box } from '@chakra-ui/react';
 import { WeatherCard, WeatherResult } from './WeatherCard';
 import { FormatMessageContent } from './FormatMessageContent';
+import { TimeDisplay } from '@/components/TimeDisplay';
+
+interface TimeData {
+  currentTime: string;
+  timezone: string;
+  timestamp: number;
+}
 
 export const Messages = ({ messages }: { messages: UIMessage[] }) => {
   return (
@@ -34,16 +41,17 @@ export const Messages = ({ messages }: { messages: UIMessage[] }) => {
               </div>
 
               {m.toolInvocations &&
-                m.toolInvocations.map((toolInvocation: any) => {
-                  console.log(toolInvocation);
+                m.toolInvocations.map((toolInvocation) => {
+                  // console.log(toolInvocation);
                   if (
                     toolInvocation.toolName === 'getWeather' &&
-                    toolInvocation.result
+                    toolInvocation.state === 'result' &&
+                    'result' in toolInvocation
                   ) {
                     const weatherData = toolInvocation.result as WeatherResult;
                     return (
                       <WeatherCard
-                        key={toolInvocation.id}
+                        key={toolInvocation.toolCallId}
                         temperature={weatherData.temperature}
                         weathercode={weatherData.weathercode}
                         relativehumidity={weatherData.relativehumidity}
@@ -51,6 +59,23 @@ export const Messages = ({ messages }: { messages: UIMessage[] }) => {
                       />
                     );
                   }
+                  if (
+                    toolInvocation.toolName === 'getTime' &&
+                    toolInvocation.state === 'result' &&
+                    'result' in toolInvocation
+                  ) {
+                    const timeData = toolInvocation.result as TimeData;
+
+                    if (timeData && timeData.timezone) {
+                      return (
+                        <TimeDisplay
+                          key={toolInvocation.toolCallId}
+                          timezone={timeData.timezone}
+                        />
+                      );
+                    }
+                  }
+                  return null;
                 })}
             </Box>
           ))}

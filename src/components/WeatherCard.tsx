@@ -1,6 +1,12 @@
 import React from 'react';
 import { Box, Heading, Text, Flex, Icon } from '@chakra-ui/react';
 import { BsCloudRain, BsSun, BsCloud } from 'react-icons/bs';
+import {
+  WiDayCloudyHigh,
+  WiDayFog,
+  WiDayRain,
+  WiDayThunderstorm,
+} from 'react-icons/wi';
 
 // Basic weather code mapping. Add or modify as needed.
 const weatherMap: Record<
@@ -10,6 +16,25 @@ const weatherMap: Record<
   61: { label: 'Rain', IconComponent: BsCloudRain },
   0: { label: 'Clear sky', IconComponent: BsSun },
   2: { label: 'Partly Cloudy', IconComponent: BsCloud },
+  3: { label: 'Partly Cloudy with Some Sun', IconComponent: WiDayCloudyHigh },
+  45: { label: 'Fog', IconComponent: WiDayFog },
+  51: { label: 'Light Drizzle', IconComponent: BsCloudRain },
+  53: { label: 'Moderate Drizzle', IconComponent: BsCloudRain },
+  55: { label: 'Dense Drizzle', IconComponent: BsCloudRain },
+  66: { label: 'Light Freezing Drizzle', IconComponent: BsCloudRain },
+  67: { label: 'Heavy Freezing Drizzle', IconComponent: BsCloudRain },
+  80: { label: 'Light Rain', IconComponent: WiDayRain },
+  81: { label: 'Moderate Rain', IconComponent: WiDayRain },
+  82: { label: 'Heavy Rain', IconComponent: WiDayRain },
+  95: { label: 'Thunderstorm', IconComponent: WiDayThunderstorm },
+  96: {
+    label: 'Thunderstorm with Light Hail',
+    IconComponent: WiDayThunderstorm,
+  },
+  99: {
+    label: 'Thunderstorm with Heavy Hail',
+    IconComponent: WiDayThunderstorm,
+  },
   // Add more codes as needed
 };
 

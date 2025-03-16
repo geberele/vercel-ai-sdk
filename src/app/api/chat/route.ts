@@ -95,6 +95,7 @@ export async function POST(req: Request) {
                   ),
               }),
               execute: async ({ timezone }) => {
+                console.log('timezone', timezone);
                 const now = new Date();
                 let timeString;
                 let timezoneName;
