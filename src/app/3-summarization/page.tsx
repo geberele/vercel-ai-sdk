@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import { Box, Text, Button, Heading, VStack } from '@chakra-ui/react';
 
-import { generateSummary } from './summarization';
+import { generateSummaryObject } from './summarization';
 import messages from './messages.json';
 import { Comment } from '@/components/Comments';
 
 export default function Home() {
   const [summary, setSummary] = useState<Awaited<
-    ReturnType<typeof generateSummary>
+    ReturnType<typeof generateSummaryObject>
   > | null>(null);
 
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ export default function Home() {
           onClick={async () => {
             setLoading(true);
             // generate summary
-            const summary = await generateSummary(messages);
+            const summary = await generateSummaryObject(messages);
             console.log('Summary:', summary);
             setSummary(summary);
             setLoading(false);

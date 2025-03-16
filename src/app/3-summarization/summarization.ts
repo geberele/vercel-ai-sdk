@@ -8,7 +8,10 @@ import {
   claude_3_haiku,
 } from '@/lib/models';
 
-// Generate a summary of all the comments so we don't have to read through everything.
+export const generateSummaryObject = async (comments: any[]) => {
+  return await generateSummary(comments).then((result) => result.object);
+};
+
 export const generateSummary = async (comments: any[]) => {
   try {
     // Scenario 1: generateObject no-schema
@@ -65,7 +68,7 @@ export const generateSummary = async (comments: any[]) => {
     //   output: 'array',
     // });
 
-    return result.object;
+    return result;
   } catch (error) {
     console.error('Error generating summary:', error);
     throw error;
