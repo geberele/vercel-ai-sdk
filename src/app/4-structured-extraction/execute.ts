@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { extractAppointmentDetails } from './extractAppointmentDetails';
+import { logUsage } from '../../lib/utils';
 
 // Import appointment
 const appointmentFile = fs.readFileSync(
@@ -8,8 +9,9 @@ const appointmentFile = fs.readFileSync(
 );
 
 const main = async () => {
-  const appointment = await extractAppointmentDetails(appointmentFile);
-  console.log(appointment);
+  const result = await extractAppointmentDetails(appointmentFile);
+  console.log(result.object);
+  logUsage(result.usage);
 };
 
 main().catch(console.error);

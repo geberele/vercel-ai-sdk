@@ -14,9 +14,8 @@ export const extractAppointmentDetails = async (appointment: string) => {
     //     appointment: z.string().describe('The appointment details'),
     //   }),
     //   output: 'array',
-    //   maxTokens: 100,
     // });
-    // return result.object;
+    // return result;
 
     // Scenario 2: complex schema
     const result = await streamObject({
@@ -33,14 +32,15 @@ export const extractAppointmentDetails = async (appointment: string) => {
         date: z.string(),
       }),
       output: 'array',
-      maxTokens: 100,
     });
     for await (const partialObject of result.partialObjectStream) {
       console.clear();
       console.dir(partialObject);
     }
-    // const finalResult = await result.object;
-    // return finalResult;
+    console.clear();
+    const finalResult = await result.object;
+    const finalUsage = await result.usage;
+    return { object: finalResult, usage: finalUsage };
   } catch (error) {
     console.error('Error generating summary:', error);
     throw error;
