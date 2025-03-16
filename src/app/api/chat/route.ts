@@ -131,7 +131,7 @@ export async function POST(req: Request) {
             },
           },
     });
-
+    // console.log(result.toDataStreamResponse());
     return result.toDataStreamResponse();
   } catch (error) {
     console.error('Chat API Error:', error);

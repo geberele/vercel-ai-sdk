@@ -10,6 +10,7 @@ import {
   openai_gpt_4o_mini,
   claude_3_sonnet,
 } from '@/lib/models';
+import { logUsage } from '../../lib/utils';
 
 async function main() {
   // Scenario 1: generateText
@@ -20,16 +21,18 @@ async function main() {
       JSON.stringify(supportRequests),
   });
   console.log(result.text);
+  logUsage(result.usage);
 
   // Scenario 2: generateObject (no schema)
   // const result = await generateObject({
-  //   model: llama_local_ds_r1, // llama_local_llama3_2 or llama_local_ds_r1
+  //   model: llama_local_llama3_2, // llama_local_llama3_2 or llama_local_ds_r1
   //   prompt:
   //     'Classify the following support requests.\n\n' +
   //     JSON.stringify(supportRequests),
   //   output: 'no-schema',
   // });
   // console.log(result.object);
+  // logUsage(result.usage);
 
   // Scenario 3: generateObject (with schema)
   // const result = await generateObject({
@@ -56,6 +59,7 @@ async function main() {
   //   output: 'array',
   // });
   // console.log(result.object);
+  // logUsage(result.usage);
 }
 
 main().catch(console.error);

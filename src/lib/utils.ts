@@ -17,7 +17,25 @@ export const addOllamaLogging = async () => {
   }
 };
 
-// Time formatting utilities
+export const logUsage = ({
+  promptTokens,
+  completionTokens,
+  totalTokens,
+}: {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+}) => {
+  process.stdout.write('\n\n');
+  console.log(
+    'promptTokens:',
+    promptTokens,
+    ' - completionTokens:',
+    completionTokens,
+    ' - totalTokens:',
+    totalTokens
+  );
+};
 
 /**
  * Format a date to a time string based on options
