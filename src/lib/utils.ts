@@ -237,3 +237,58 @@ export const createFallbackTimeData = (
     };
   }
 };
+
+/**
+ * Log metrics from AI streamText response asynchronously
+ * This allows logging usage stats and tool calls without blocking the response
+ */
+type ToolCall = {
+  name: string;
+  args: Record<string, unknown>;
+};
+
+type StepInfo = {
+  toolCalls?: ToolCall[];
+};
+
+type UsageInfo = {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+};
+
+type AIResult = {
+  usage: Promise<UsageInfo>;
+  steps: Promise<StepInfo[]>;
+};
+
+export const logMetricsAsync = (result: AIResult, modelId: string): void => {
+  // This runs in the background and doesn't block the response
+  (async () => {
+    try {
+      // We need to wait for these promises to resolve
+      const usage = await result.usage;
+      const steps = await result.steps;
+
+      console.log(`\n[${modelId}] Usage stats:`);
+      console.log(`  Prompt tokens: ${usage.promptTokens}`);
+      console.log(`  Completion tokens: ${usage.completionTokens}`);
+      console.log(`  Total tokens: ${usage.totalTokens}`);
+      console.log(`  Steps: ${steps.length}`);
+
+      // Log detailed step information
+      steps.forEach((step, index) => {
+        // Check for tool calls (the structure matches the Vercel AI SDK)
+        if (step.toolCalls && step.toolCalls.length > 0) {
+          console.log(`\nStep ${index + 1}:`);
+          step.toolCalls.forEach((toolCall) => {
+            console.log(`  Tool called: ${toolCall.name}`);
+            console.log(`  Tool args: ${JSON.stringify(toolCall.args)}`);
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error logging metrics:', error);
+    }
+  })();
+};

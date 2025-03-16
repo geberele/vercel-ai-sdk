@@ -9,7 +9,7 @@ import {
   llama_local_ds_r1,
 } from '@/lib/models';
 import { z } from 'zod';
-import { addOllamaLogging } from '../../../lib/utils';
+import { addOllamaLogging, logMetricsAsync } from '@/lib/utils';
 
 // Allow streaming responses up to 60 seconds for local models which might be slower
 export const maxDuration = 60;
@@ -131,7 +131,10 @@ export async function POST(req: Request) {
             },
           },
     });
-    // console.log(result.toDataStreamResponse());
+
+    // Log usage and steps asynchronously without affecting the response
+    logMetricsAsync(result as any, modelId);
+
     return result.toDataStreamResponse();
   } catch (error) {
     console.error('Chat API Error:', error);
