@@ -12,26 +12,26 @@ const essay = fs.readFileSync('src/app/1-extraction/essay.txt', 'utf-8');
 
 const main = async () => {
   // Scenario 1 - generate text
-  // const result = await generateText({
-  //   model: llama_local_llama3_2,
+  const result = await generateText({
+    model: llama_local_llama3_2,
+    prompt:
+      'What is the key takeaway of this piece in 50 words?' + '\n\n' + essay,
+    maxTokens: 100,
+    temperature: 1, // 0.0 (low - deterministic) - 1.0 (high - random)
+  });
+  console.log(result.text);
+
+  // Scenario 2 - stream text
+  // const { textStream } = await streamText({
+  //   model: llama_local_llama3_2, // llama_local_llama3_2 or openai_gpt_4o_mini
   //   prompt:
-  //     'What is the key takeaway of this piece in 50 words?' + '\n\n' + essay,
+  //     'What is the key takeaway of this piece in 250 words?' + '\n\n' + essay,
   //   maxTokens: 100,
   //   temperature: 1,
   // });
-  // console.log(result.text);
-
-  // Scenario 2 - stream text
-  const { textStream } = await streamText({
-    model: openai_gpt_4o_mini,
-    prompt:
-      'What is the key takeaway of this piece in 250 words?' + '\n\n' + essay,
-    maxTokens: 100,
-    temperature: 1,
-  });
-  for await (const chunk of textStream) {
-    process.stdout.write(chunk);
-  }
+  // for await (const chunk of textStream) {
+  //   process.stdout.write(chunk);
+  // }
 };
 
 main().catch(console.error);

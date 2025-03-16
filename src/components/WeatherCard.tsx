@@ -20,6 +20,13 @@ export interface WeatherProps {
   city: string;
 }
 
+export interface WeatherResult {
+  temperature: number;
+  weathercode: number;
+  relativehumidity: number;
+  city: string;
+}
+
 export const WeatherCard = ({
   temperature,
   weathercode,

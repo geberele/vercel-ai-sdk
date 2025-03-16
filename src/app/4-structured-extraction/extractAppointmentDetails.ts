@@ -35,9 +35,9 @@ export const extractAppointmentDetails = async (appointment: string) => {
       output: 'array',
       maxTokens: 100,
     });
-    for await (const chunk of result.partialObjectStream) {
+    for await (const partialObject of result.partialObjectStream) {
       console.clear();
-      console.dir(chunk, { depth: null });
+      console.dir(partialObject);
     }
     // const finalResult = await result.object;
     // return finalResult;

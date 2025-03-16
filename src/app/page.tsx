@@ -1,4 +1,4 @@
-import { Box, Heading, Text, List, LinkOverlay } from '@chakra-ui/react';
+import { Box, Heading, Text, List } from '@chakra-ui/react';
 import Link from 'next/link';
 
 export default function Home() {
@@ -31,13 +31,6 @@ export default function Home() {
           </List.Item>
         </List.Root>
       </Box>
-      <Box
-        m={10}
-        maxW="xl"
-        display="flex"
-        flexDirection="column"
-        width="100%"
-      ></Box>
     </main>
   );
 }

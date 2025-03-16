@@ -9,6 +9,7 @@ import {
   llama_local_ds_r1,
 } from '@/lib/models';
 import { z } from 'zod';
+import { addOllamaLogging } from '../../../lib/utils';
 
 // Allow streaming responses up to 60 seconds for local models which might be slower
 export const maxDuration = 60;
@@ -37,26 +38,9 @@ export async function POST(req: Request) {
 
     console.log(`Using model: ${modelId}, Tools disabled: ${disableTools}`);
 
-    // Check if it's a local model to add additional logging
-    const isLocalModel = modelId.includes('local');
-    if (isLocalModel) {
-      console.log('Using local Ollama model. Ensuring connection...');
-      try {
-        // Optional: Add a quick check to see if Ollama is accessible
-        const checkResponse = await fetch(
-          'http://localhost:11434/api/version',
-          {
-            method: 'GET',
-          }
-        ).then((res) => res.json());
-        console.log('Ollama server version:', checkResponse.version);
-      } catch (error) {
-        console.error('Error connecting to Ollama server:', error);
-        return NextResponse.json(
-          { error: 'Failed to connect to local Ollama server. Is it running?' },
-          { status: 503 }
-        );
-      }
+    // Adds additional logging for local models
+    if (modelId.includes('local')) {
+      addOllamaLogging();
     }
 
     // Scenario 1: simple stream (Q: What do you think of Bill?)
@@ -68,48 +52,84 @@ export async function POST(req: Request) {
     //   messages,
     // });
 
-    // Configure system prompt and options
-    const systemPrompt = `You are a helpful, friendly AI assistant. You communicate clearly and provide thoughtful, accurate responses.
-    When given a task, you complete it to the best of your abilities using the information available to you.`;
-
-    // Base configuration for streamText
-    const config: any = {
-      model: selectedModel,
-      system: systemPrompt,
-      messages
-    };
-
-    // Add tools only if not disabled
-    if (!disableTools) {
-      config.tools = {
-        getWeather: {
-          description: 'Get the weather in a given location',
-          parameters: z.object({
-            latitude: z.number(),
-            longitude: z.number(),
-            city: z.string(),
-          }),
-          execute: async ({ latitude, longitude, city }) => {
-            const response = await fetch(
-              `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode,relativehumidity_2m&timezone=auto`
-            );
-            const weatherData = await response.json();
-            return {
-              temperature: weatherData.current.temperature_2m,
-              weathercode: weatherData.current.weathercode,
-              relativehumidity: weatherData.current.relativehumidity_2m,
-              city,
-            };
-          },
-        },
-      };
-    }
-
     // Scenario 2: stream with tools (Q: What's the weather like in San Francisco?)
     // Tools are actions that an LLM can invoke.
     // The results of these actions can be reported back to the LLM to be considered in the next response.
-    // Stream with or without tools based on config
-    const result = await streamText(config);
+    const result = await streamText({
+      model: selectedModel,
+      system: `You are a helpful, friendly AI assistant. You communicate clearly and provide thoughtful, accurate responses.
+        When given a task, you complete it to the best of your abilities using the information available to you.`,
+      messages,
+      tools: disableTools
+        ? undefined
+        : {
+            getWeather: {
+              description: 'Get the weather in a given location',
+              parameters: z.object({
+                latitude: z.number(),
+                longitude: z.number(),
+                city: z.string(),
+              }),
+              execute: async ({ latitude, longitude, city }) => {
+                const response = await fetch(
+                  `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode,relativehumidity_2m&timezone=auto`
+                );
+                const weatherData = await response.json();
+                return {
+                  temperature: weatherData.current.temperature_2m,
+                  weathercode: weatherData.current.weathercode,
+                  relativehumidity: weatherData.current.relativehumidity_2m,
+                  city,
+                };
+              },
+            },
+            getTime: {
+              description:
+                'Get the current time, optionally in a specific timezone',
+              parameters: z.object({
+                timezone: z
+                  .string()
+                  .optional()
+                  .describe(
+                    'Optional timezone in IANA format (e.g., "America/New_York", "Europe/London")'
+                  ),
+              }),
+              execute: async ({ timezone }) => {
+                const now = new Date();
+                let timeString;
+                let timezoneName;
+
+                try {
+                  if (timezone) {
+                    timeString = now.toLocaleString('en-US', {
+                      timeZone: timezone,
+                    });
+                    timezoneName = timezone;
+                  } else {
+                    timeString = now.toLocaleString();
+                    timezoneName =
+                      Intl.DateTimeFormat().resolvedOptions().timeZone;
+                  }
+                } catch (error) {
+                  // If timezone is invalid, fall back to local time
+                  console.error(
+                    `Invalid timezone provided: ${timezone}`,
+                    error
+                  );
+                  timeString = now.toLocaleString();
+                  timezoneName =
+                    Intl.DateTimeFormat().resolvedOptions().timeZone;
+                }
+
+                return {
+                  currentTime: timeString,
+                  timezone: timezoneName,
+                  timestamp: now.getTime(),
+                };
+              },
+            },
+          },
+    });
 
     return result.toDataStreamResponse();
   } catch (error) {
