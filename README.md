@@ -12,7 +12,32 @@ This is a [Next.js](https://nextjs.org) project demonstrating various AI capabil
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+1. **Install Node.js**
+
+   - Download and install Node.js from [nodejs.org](https://nodejs.org/) (version 18.0.0 or higher recommended)
+   - Verify installation by running `node -v` and `npm -v` in your terminal
+
+2. **Clone this repository**
+
+   ```bash
+   git clone https://github.com/yourusername/next-js-ai.git
+   cd next-js-ai
+   ```
+
+3. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   # or
+   bun install
+   ```
+
+### Running the development server
 
 ```bash
 npm run dev
